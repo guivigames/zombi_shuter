@@ -44,7 +44,6 @@ void FrameWork::UpdateEvent()
 void FrameWork::UpdateRender()
 {
     m_window->clear();
-
     m_window->draw( m_player.GetSprite());
     
     m_window->display();
