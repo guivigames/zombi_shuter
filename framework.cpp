@@ -37,6 +37,24 @@ void FrameWork::UpdateEvent()
         }
     }
 
+    if (m_player.WillUpdate())
+    {
+        sf::Vector2f player_dir = m_player.GetDirection();
+        float alpha = atan2(player_dir.y, player_dir.x)*180/PI;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) alpha-=5;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) alpha+=5;
+        
+        sf::Vector2f vel = { 0.0, 0.0};
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) vel.x+=5;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) vel.x-=5;
+        m_player.SetVelocity(vel);
+
+        player_dir.x = cos(alpha*PI/180);
+        player_dir.y = sin(alpha*PI/180);
+        m_player.SetDirection(player_dir);
+    }
+
+
     m_player.Update();
 }
 

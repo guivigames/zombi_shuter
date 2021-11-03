@@ -1,6 +1,9 @@
 #pragma once
 #include <vector>
 #include <SFML/Graphics.hpp>
+#include <math.h>
+
+#define PI 3.14159265
 
 class Character
 {
@@ -14,6 +17,8 @@ protected:
     id_t            m_walk_frames;              // total number of sprites in texture.
     sf::Sprite      m_run_sprite;               // Sprite for running.
     sf::Clock       m_walk_clock;               // Clock for updating the sprites.
+    bool            m_will_update = false;      // Flag to indicate if the player will update.
+
 public:
     Character();
     ~Character();
@@ -26,6 +31,7 @@ public:
     void SetVelocity(sf::Vector2f vel);
     sf::Vector2f GetVelocity();
     void Update();
+    bool WillUpdate();
 };
 
 

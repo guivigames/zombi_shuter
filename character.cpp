@@ -1,8 +1,6 @@
 #include "character.h"
 #include "TextureManager.h"
-#include <math.h>
 
-#define PI 3.14159265
 
 /// @brief
 Character::Character()
@@ -70,21 +68,33 @@ sf::Vector2f Character::GetVelocity()
 /// @brief
 void Character::Update()
 {
-    if (m_walk_clock.getElapsedTime().asSeconds() > 0.25f)
+    if (m_will_update)
     {
         float alpha = atan2(m_direction.y, m_direction.x)*180/PI;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) alpha-=5;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) alpha+=5;
-        m_direction.x = cos(alpha*PI/180);
-        m_direction.y = sin(alpha*PI/180);
+        if (m_velocity.x != 0){
+            m_walk_frame.left += m_walk_frame.width;
+            if ( static_cast<unsigned int>( m_walk_frame.left) >= m_walk_size.x)
+                m_walk_frame.left = 0;
+            else if (static_cast<unsigned int>( m_walk_frame.left) < 0)
+                m_walk_frame.left = m_walk_size.x-m_walk_frame.width;
 
-        m_walk_frame.left += m_walk_frame.width;
-        if (m_walk_frame.left >= m_walk_size.x)
-            m_walk_frame.left = 0;
+            m_position.x = m_position.x + (m_direction.x * m_velocity.x);
+            m_position.y = m_position.y + (m_direction.y * m_velocity.x);
+        }
         m_walk_sprite.setTextureRect(m_walk_frame);
         m_walk_sprite.setRotation(alpha);
         m_walk_sprite.setPosition(m_position);
-        //m_walk_sprite.setOrigin( sf::Vector2f((m_walk_frame.width-m_walk_frame.left)/2, (m_walk_frame.height-m_walk_frame.top)/2));
+        m_will_update = false;
+    }
+}
+
+/// @brief Checks if the charcter should update.
+bool Character::WillUpdate()
+{
+    if (m_walk_clock.getElapsedTime().asSeconds() > 0.1f)
+    {
+        m_will_update = true;
         m_walk_clock.restart();
     }
+    return m_will_update;
 }
