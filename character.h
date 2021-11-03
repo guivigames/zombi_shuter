@@ -6,7 +6,7 @@ class Character
 {
 protected:
     sf::Vector2f    m_position = { 0.0, 0.0};   // Position of character.
-    sf::Vector2f    m_direction = { 0.0, 0.0};  // Direction of character.
+    sf::Vector2f    m_direction = { 1.0, 0.0};  // Direction of character.
     sf::Vector2f    m_velocity = { 0.0, 0.0};   // Velocit of character.
     sf::Sprite      m_walk_sprite;              // Sprites of chracter while walking. 
     sf::Vector2u    m_walk_size;                // Size of the entire texture.
