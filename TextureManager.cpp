@@ -5,8 +5,15 @@ TextureManager* TextureManager::m_s_Instance = nullptr;
 
 TextureManager::TextureManager()
 {
-    assert(m_s_Instance == nullptr);
-    m_s_Instance = this;
+    //assert(m_s_Instance == nullptr);
+    //m_s_Instance = this;
+}
+
+TextureManager* TextureManager::Instance()
+{
+    if (m_s_Instance == nullptr)
+        m_s_Instance = new TextureManager();
+    return m_s_Instance;
 }
 
 sf::Texture& TheTextureManager::GetTexture(std::string const& filename)

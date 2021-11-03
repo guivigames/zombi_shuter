@@ -24,6 +24,8 @@ protected:
     
     sf::RenderWindow* m_window;
 
+    Character m_player;
+
 public:
     FrameWork();
     ~FrameWork();

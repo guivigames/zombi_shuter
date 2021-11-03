@@ -8,10 +8,11 @@
 class TextureManager 
 {
 protected:
+    TextureManager();
     static TextureManager* m_s_Instance;
     std::map<std::string, sf::Texture> m_Textures;
 public:
-    TextureManager();
+    static TextureManager* Instance();
     static sf::Texture& GetTexture(std::string const &filename);
 };
 

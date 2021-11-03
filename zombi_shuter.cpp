@@ -3,18 +3,16 @@
 #include "framework.h"
 #include "character.h"
 
-TextureManager g_textureManager;
-
 int main()
 {
     srand(time(NULL));
 
     FrameWork zombi;
-
+    
     while (zombi.WindowIsOpened())
     {
         zombi.UpdateEvent();
-
+        
         zombi.UpdateRender();
     }
 
