@@ -9,14 +9,14 @@ Character::Character()
     m_Health    = START_HEALTH;
     m_MaxHealth = START_HEALTH;
 
-    sf::Texture texture  = TheTextureManager::Instance()->GetTexture("assets/player_walk_strip6.png");
-    m_walk_frames = 6;
-    m_walk_size = texture.getSize();
+    //sf::Texture texture  = TheTextureManager::Instance()->GetTexture("assets/player_walk_strip6.png");
+    m_walk_frames = 1;
+    m_walk_size = TheTextureManager::Instance()->GetTexture("assets/player.png").getSize();
     m_walk_frame.left = 0;
     m_walk_frame.top = 0;
     m_walk_frame.width = m_walk_size.x / m_walk_frames;
     m_walk_frame.height = m_walk_size.y;
-    m_walk_sprite.setTexture(TheTextureManager::Instance()->GetTexture("assets/player_walk_strip6.png"));
+    m_walk_sprite.setTexture(TheTextureManager::Instance()->GetTexture("assets/player.png"));
     m_walk_sprite.setTextureRect(m_walk_frame);
     m_walk_sprite.setOrigin( sf::Vector2f((m_walk_frame.width-m_walk_frame.left)/2, (m_walk_frame.height-m_walk_frame.top)/2));
 }
@@ -127,7 +127,7 @@ void Character::stopDown()
     m_DownPressed = false;
 }
 
-void Character::update( float elapsedTime, sf::Vector2f mousePosition)
+void Character::update( float elapsedTime, sf::Vector2i mousePosition)
 {
     if(m_UpPressed)
     {

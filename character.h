@@ -51,7 +51,7 @@ public:
     void stopRight();
     void stopUp();
     void stopDown();
-    void update(float elapsedTime, sf::Vector2f mousePosition);
+    void update(float elapsedTime, sf::Vector2i mousePosition);
     void upgradeSpeed();
     void upgradeHealth();
     void increaseHealthLevel(int amount);
