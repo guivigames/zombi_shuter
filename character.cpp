@@ -1,6 +1,6 @@
 #include "character.h"
 #include "TextureManager.h"
-
+#include <iostream>
 
 /// @brief
 Character::Character()
@@ -9,16 +9,18 @@ Character::Character()
     m_Health    = START_HEALTH;
     m_MaxHealth = START_HEALTH;
 
+    m_Sprite.setTexture( TheTextureManager::Instance()->GetTexture("assets/player.png"));
+    m_Sprite.setOrigin(25, 25);
     //sf::Texture texture  = TheTextureManager::Instance()->GetTexture("assets/player_walk_strip6.png");
-    m_walk_frames = 1;
-    m_walk_size = TheTextureManager::Instance()->GetTexture("assets/player.png").getSize();
-    m_walk_frame.left = 0;
-    m_walk_frame.top = 0;
-    m_walk_frame.width = m_walk_size.x / m_walk_frames;
-    m_walk_frame.height = m_walk_size.y;
-    m_walk_sprite.setTexture(TheTextureManager::Instance()->GetTexture("assets/player.png"));
-    m_walk_sprite.setTextureRect(m_walk_frame);
-    m_walk_sprite.setOrigin( sf::Vector2f((m_walk_frame.width-m_walk_frame.left)/2, (m_walk_frame.height-m_walk_frame.top)/2));
+    //m_walk_frames = 1;
+    //m_walk_size = TheTextureManager::Instance()->GetTexture("assets/player.png").getSize();
+    //m_walk_frame.left = 0;
+    //m_walk_frame.top = 0;
+    //m_walk_frame.width = m_walk_size.x / m_walk_frames;
+    //m_walk_frame.height = m_walk_size.y;
+    //m_walk_sprite.setTexture(TheTextureManager::Instance()->GetTexture("assets/player.png"));
+    //m_walk_sprite.setTextureRect(m_walk_frame);
+    //m_walk_sprite.setOrigin( sf::Vector2f((m_walk_frame.width-m_walk_frame.left)/2, (m_walk_frame.height-m_walk_frame.top)/2));
 }
 
 /// @brief
@@ -63,7 +65,7 @@ bool Character::hit(sf::Time timeHit)
 
 sf::FloatRect Character::getPosition()
 {
-    return m_walk_sprite.getGlobalBounds();
+    return m_Sprite.getGlobalBounds();//m_walk_sprite.getGlobalBounds();
 }
 
 sf::Vector2f Character::getCenter()
@@ -73,13 +75,13 @@ sf::Vector2f Character::getCenter()
 
 float Character::getRotation()
 {
-    return m_walk_sprite.getRotation();
+    return m_Sprite.getRotation();//m_walk_sprite.getRotation();
 }
 
 /// @brief
 sf::Sprite Character::GetSprite()
 {
-    return m_walk_sprite;
+    return m_Sprite; //m_walk_sprite;
 }
 
 int Character::getHealth()
@@ -132,11 +134,14 @@ void Character::update( float elapsedTime, sf::Vector2i mousePosition)
     if(m_UpPressed)
     {
         m_position.y -= m_Speed * elapsedTime;
+        //std::cout << "Up" << std::endl;
+        //std::cout << " X Y = " << m_position.x << " " << m_position.y << std::endl;
     }
 
     if(m_DownPressed)
     {
         m_position.y += m_Speed * elapsedTime;
+        //std::cout << "Down" << std::endl;
     }
 
     if(m_LeftPressed)
@@ -149,7 +154,8 @@ void Character::update( float elapsedTime, sf::Vector2i mousePosition)
         m_position.x += m_Speed * elapsedTime;
     }
 
-    m_walk_sprite.setPosition(m_position);
+    //m_walk_sprite.setPosition(m_position);
+    m_Sprite.setPosition(m_position);
 
     if (m_position.x > m_Arena.width - m_TileSize)
         m_position.x = m_Arena.width - m_TileSize;
@@ -166,7 +172,8 @@ void Character::update( float elapsedTime, sf::Vector2i mousePosition)
 
     float angle = (atan2(   mousePosition.y - m_resolution.y / 2, 
                             mousePosition.x - m_resolution.x / 2) * 180) / 3.1415;
-    m_walk_sprite.setRotation(angle);
+    //m_walk_sprite.setRotation(angle);
+    m_Sprite.setRotation(angle);
 }
 
 void Character::upgradeSpeed()
@@ -225,7 +232,7 @@ sf::Vector2f Character::GetVelocity()
 /// @brief
 void Character::Update()
 {
-    if (m_will_update)
+    /*if (m_will_update)
     {
         float alpha = atan2(m_direction.y, m_direction.x)*180/PI;
         if (m_velocity.x != 0){
@@ -242,7 +249,7 @@ void Character::Update()
         m_walk_sprite.setRotation(alpha);
         m_walk_sprite.setPosition(m_position);
         m_will_update = false;
-    }
+    }*/
 }
 
 /// @brief Checks if the charcter should update.

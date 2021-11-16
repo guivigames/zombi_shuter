@@ -1,5 +1,8 @@
 #include <SFML/Graphics.hpp>
 #include "character.h"
+#include "ZombiArena.h"
+#include "TextureManager.h"
+#include <iostream>
 
 using namespace sf;
 
@@ -43,6 +46,13 @@ int main()
 
     // The boundaries of the arena
     IntRect arena;
+
+    // CreateThe background.
+    VertexArray background;
+    // Load the texture for our baclground vertex array.
+    Texture textureBackground;
+    textureBackground = TheTextureManager::Instance()->GetTexture("assets/background_sheet.png");
+
 #pragma endregion Initialization
 
     // The main game loop
@@ -148,8 +158,9 @@ int main()
                 arena.left = 0;
                 arena.top  = 0;
 
-                // We will modify ths line of code later.
-                int tileSize = 50;
+                // pass the vertex array by reference
+                // to the creator of the backround
+                int tileSize = createBackground(background, arena);
 
                 // Spawn the player.
                 player.Spawn(arena, resolution, tileSize);
@@ -203,6 +214,8 @@ int main()
             // and draw everything related to it
             window.setView(mainView);
 
+            // draw the background
+            window.draw( background, &textureBackground);
             // Draw the layer
             window.draw(player.GetSprite());
        }

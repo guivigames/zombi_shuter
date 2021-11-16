@@ -15,10 +15,11 @@ protected:
     sf::Vector2f    m_direction = { 1.0, 0.0};  // Direction of character.
     sf::Vector2f    m_velocity = { 0.0, 0.0};   // Velocit of character.
     sf::Vector2f    m_resolution;               // Screen resolution.
-    sf::Sprite      m_walk_sprite;              // Sprites of chracter while walking. 
-    sf::Vector2u    m_walk_size;                // Size of the entire texture.
-    sf::IntRect     m_walk_frame;               // Rectangle of texture to render.
-    id_t            m_walk_frames;              // total number of sprites in texture.
+    //sf::Sprite      m_walk_sprite;              // Sprites of chracter while walking. 
+    //sf::Vector2u    m_walk_size;                // Size of the entire texture.
+    //sf::IntRect     m_walk_frame;               // Rectangle of texture to render.
+    //id_t            m_walk_frames;              // total number of sprites in texture.
+    sf::Sprite      m_Sprite;              // Sprites of chracter
     sf::IntRect     m_Arena;                    // Size of the current arena.
     int             m_TileSize;                 // How big is each tile in the arena.
     int             m_Health;
