@@ -31,8 +31,9 @@ Character::~Character()
 
 void Character::Spawn(sf::IntRect arena, sf::Vector2f resolution, int tileSize)
 {
-    m_position.x = arena.width/2;
-    m_position.y = arena.height/2;
+    m_position.x = (float) arena.width / 2;
+    m_position.y = (float) arena.height / 2;
+    std::cout << m_position.x << " " << m_position.y << std::endl;
     m_Arena = arena;
 
     m_TileSize = tileSize;
@@ -156,18 +157,19 @@ void Character::update( float elapsedTime, sf::Vector2i mousePosition)
 
     //m_walk_sprite.setPosition(m_position);
     m_Sprite.setPosition(m_position);
+    std::cout << m_position.x << " " << m_position.y << std::endl;
 
     if (m_position.x > m_Arena.width - m_TileSize)
         m_position.x = m_Arena.width - m_TileSize;
 
-    if (m_position.x < m_Arena.width + m_TileSize)
-        m_position.x = m_Arena.width + m_TileSize;
+    if (m_position.x < m_TileSize)
+        m_position.x = m_TileSize;
     
     if (m_position.y > m_Arena.height - m_TileSize)
         m_position.y = m_Arena.height - m_TileSize;
     
-    if (m_position.y < m_Arena.height + m_TileSize)
-        m_position.y = m_Arena.height + m_TileSize;
+    if (m_position.y < m_TileSize)
+        m_position.y = m_TileSize;
 
 
     float angle = (atan2(   mousePosition.y - m_resolution.y / 2, 
