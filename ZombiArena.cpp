@@ -53,6 +53,11 @@ int main()
     Texture textureBackground;
     textureBackground = TheTextureManager::Instance()->GetTexture("assets/background_sheet.png");
 
+    // Prepare for a horde of zombies
+    int numZombies;
+    int numZombiesAlive;
+    Zombie* zombies = nullptr;
+
 #pragma endregion Initialization
 
     // The main game loop
@@ -165,6 +170,13 @@ int main()
                 // Spawn the player.
                 player.Spawn(arena, resolution, tileSize);
                 
+                // Create a horde of zombies
+                numZombies = 10;
+                // Delete the previously allocated memory if it exist
+                delete[] zombies;
+                zombies = createHorde(numZombies, arena);
+                numZombiesAlive = numZombies;
+
                 // Reset the clock so there isn't a frame jump
                 clock.restart(); 
             }
@@ -199,6 +211,15 @@ int main()
 
             // make the view centre around he player
             mainView.setCenter(player.getCenter());
+
+            // update the living zombies
+            for (int i = 0; i < numZombies; i++)
+            {
+                if (zombies[i].isAlive())
+                {
+                    zombies[i].update(dt.asSeconds(), playerPosition);
+                }
+            }
        }// Endupdat the escene.
         
         /*
@@ -216,6 +237,13 @@ int main()
 
             // draw the background
             window.draw( background, &textureBackground);
+
+            // Draw the zombies
+            for (int i = 0; i < numZombies; i++)
+            {
+                window.draw(zombies[i].getSprite());
+            }
+
             // Draw the layer
             window.draw(player.GetSprite());
        }

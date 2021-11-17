@@ -157,7 +157,7 @@ void Character::update( float elapsedTime, sf::Vector2i mousePosition)
 
     //m_walk_sprite.setPosition(m_position);
     m_Sprite.setPosition(m_position);
-    std::cout << m_position.x << " " << m_position.y << std::endl;
+    //std::cout << m_position.x << " " << m_position.y << std::endl;
 
     if (m_position.x > m_Arena.width - m_TileSize)
         m_position.x = m_Arena.width - m_TileSize;

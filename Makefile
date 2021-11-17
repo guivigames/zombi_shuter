@@ -1,6 +1,6 @@
 CC = g++
 CFLAGS = -g -Wall
-SRCS = TextureManager.cpp character.cpp ZombiArena.cpp CreateBackground.cpp
+SRCS = TextureManager.cpp CreateHorde.cpp character.cpp Zombie.cpp ZombiArena.cpp CreateBackground.cpp
 PROG = ZombiArena
 
 SFML = `pkg-config sfml-all --cflags --libs`
