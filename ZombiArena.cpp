@@ -3,7 +3,9 @@
 #include "ZombiArena.h"
 #include "TextureManager.h"
 #include "Bullet.h"
+#include "Pickup.h"
 #include <iostream>
+
 
 using namespace sf;
 
@@ -73,6 +75,11 @@ int main()
     sf::Sprite spriteCrosshair;
     spriteCrosshair.setTexture(TextureManager::Instance()->GetTexture("assets/crosshair.png"));
     spriteCrosshair.setOrigin(25, 25);
+
+    Pickup healthPickup(1);
+    Pickup ammoPickup(2);
+
+
 #pragma endregion Initialization
 
     // The main game loop
@@ -216,6 +223,9 @@ int main()
                 // Spawn the player.
                 player.Spawn(arena, resolution, tileSize);
                 
+                healthPickup.setArena(arena);
+                ammoPickup.setArena(arena);
+
                 // Create a horde of zombies
                 numZombies = 100;
                 // Delete the previously allocated memory if it exist
@@ -276,6 +286,9 @@ int main()
                 bullets[i].update(dtAsSeconds);
             }
 
+            // Update the pickups
+            healthPickup.update(dtAsSeconds);
+            ammoPickup.update(dtAsSeconds);
        }// Endupdat the escene.
         
         /*
@@ -309,6 +322,11 @@ int main()
             // Draw the layer
             window.draw(player.GetSprite());
 
+            if (ammoPickup.isSpawned())
+                window.draw(ammoPickup.getSprite());
+            if (healthPickup.isSpawned())
+                window.draw(healthPickup.getSprite());
+                
             window.draw(spriteCrosshair);
        }
 
