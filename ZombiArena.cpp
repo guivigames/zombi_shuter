@@ -211,8 +211,8 @@ int main()
             {
                 // prepare the level
                 // we will modify the next two lines later
-                arena.width = 5000;
-                arena.height = 5000;
+                arena.width = 1000;
+                arena.height = 1000;
                 arena.left = 0;
                 arena.top  = 0;
 
@@ -326,7 +326,7 @@ int main()
                 window.draw(ammoPickup.getSprite());
             if (healthPickup.isSpawned())
                 window.draw(healthPickup.getSprite());
-                
+
             window.draw(spriteCrosshair);
        }
 
