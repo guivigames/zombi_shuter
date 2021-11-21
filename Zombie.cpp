@@ -21,7 +21,7 @@ void Zombie::spawn(float startX, float startY, int type, int seed)
         m_Health = CHASER_HEALTH;
         break;
     case 2:
-        m_Sprite = sf::Sprite(TextureManager::Instance()->GetTexture("assets/crwler.png"));
+        m_Sprite = sf::Sprite(TextureManager::Instance()->GetTexture("assets/crawler.png"));
         m_Speed = CRAWLER_SPEED;
         m_Health = CRAWLER_HEALTH;
         break;

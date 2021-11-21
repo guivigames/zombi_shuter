@@ -79,6 +79,9 @@ int main()
     Pickup healthPickup(1);
     Pickup ammoPickup(2);
 
+    // Game data
+    int score = 0;
+    int hiScore = 0;
 
 #pragma endregion Initialization
 
@@ -227,7 +230,7 @@ int main()
                 ammoPickup.setArena(arena);
 
                 // Create a horde of zombies
-                numZombies = 100;
+                numZombies = 20;
                 // Delete the previously allocated memory if it exist
                 delete[] zombies;
                 zombies = createHorde(numZombies, arena);
@@ -289,6 +292,58 @@ int main()
             // Update the pickups
             healthPickup.update(dtAsSeconds);
             ammoPickup.update(dtAsSeconds);
+
+            // Collition detection.
+            // Check if zombie has been shot.
+            for (int i = 0; i < 100; i++)
+            {
+                for (int j = 0; j < numZombies; j++)
+                {
+                    if (bullets[i].isInFlight() && zombies[j].isAlive())
+                    {
+                        if (bullets[i].getPosition().intersects( zombies[j].getPosition()))
+                        {
+                            bullets[i].stop();
+                            // regster the hit and see if it was killed
+                            if (zombies[j].hit())
+                            {
+                                score += 10;
+                                if (score >= hiScore)
+                                    hiScore = score;
+                                numZombiesAlive--;
+                                if (numZombiesAlive == 0)
+                                    state = State::LEVELING_UP;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Have the zombies touch the player.
+            for (int i = 0; i < numZombies; i++)
+            {
+                if( player.getPosition().intersects( zombies[i].getPosition()) && zombies[i].isAlive())
+                {
+                    if (player.hit(gameTimeTotal))
+                    {
+
+                    }
+
+                    if (player.getHealth() <= 0)
+                        state = State::GAME_OVER;
+                }
+            }
+
+            // Has the player touch a puckup.
+            if( player.getPosition().intersects(healthPickup.getPosition()) && healthPickup.isSpawned())
+            {
+                player.increaseHealthLevel(healthPickup.gotIt());
+            }
+            if( player.getPosition().intersects( ammoPickup.getPosition()) && ammoPickup.isSpawned())
+            {
+                bulletsSpare += ammoPickup.gotIt();
+            }
+
        }// Endupdat the escene.
         
         /*
@@ -311,6 +366,7 @@ int main()
             for (int i = 0; i < numZombies; i++)
             {
                 window.draw(zombies[i].getSprite());
+                
             }
 
             for (int i = 0; i < 100; i++)
