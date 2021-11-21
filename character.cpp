@@ -33,7 +33,7 @@ void Character::Spawn(sf::IntRect arena, sf::Vector2f resolution, int tileSize)
 {
     m_position.x = (float) arena.width / 2;
     m_position.y = (float) arena.height / 2;
-    std::cout << m_position.x << " " << m_position.y << std::endl;
+    //std::cout << m_position.x << " " << m_position.y << std::endl;
     m_Arena = arena;
 
     m_TileSize = tileSize;

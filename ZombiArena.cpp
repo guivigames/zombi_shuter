@@ -1,10 +1,11 @@
+#include <sstream>
+#include <iostream>
 #include <SFML/Graphics.hpp>
 #include "character.h"
 #include "ZombiArena.h"
 #include "TextureManager.h"
 #include "Bullet.h"
 #include "Pickup.h"
-#include <iostream>
 
 
 using namespace sf;
@@ -82,6 +83,112 @@ int main()
     // Game data
     int score = 0;
     int hiScore = 0;
+
+    // For the home/game over Screen
+    sf::Sprite spriteGameOver;
+    spriteGameOver.setTexture(TheTextureManager::Instance()->GetTexture("assets/background.png"));
+    spriteGameOver.setPosition( 0, 0);
+     sf::View hudView(sf::FloatRect( 0,0, resolution.x, resolution.y));
+
+     // Sprite for ammo icon
+     sf::Sprite spriteAmmoIcon;
+     spriteAmmoIcon.setTexture(TheTextureManager::Instance()->GetTexture("assets/ammo_icon.png"));
+     spriteAmmoIcon.setPosition(20, 980);
+
+#pragma region text_initialization
+     // Load te font.
+     sf::Font font;
+     font.loadFromFile("assets/zombiecontrol.ttf");
+
+     //Paused
+     sf::Text pausedText;
+     pausedText.setFont(font);
+     pausedText.setCharacterSize(155);
+     pausedText.setFillColor(sf::Color::White);
+     pausedText.setPosition(400, 400);
+     pausedText.setString("Press Enter\nto continue");
+
+     // Game over
+     sf::Text gameOverText;
+     gameOverText.setFont(font);
+     gameOverText.setCharacterSize(125);
+     gameOverText.setFillColor(sf::Color::White);
+     gameOverText.setPosition(250, 850);
+     gameOverText.setString("Press Enter to play");
+
+     // Levelup
+     sf::Text levelUpText;
+     levelUpText.setFont(font);
+     levelUpText.setCharacterSize(80);
+     levelUpText.setFillColor(sf::Color::White);
+     levelUpText.setPosition(150, 250);
+     std::stringstream levelUpStream;
+     levelUpStream << 
+        "1- Increase rate of fire" <<
+        "\n2- Increase clip size(next reload)" << 
+        "\n3- Increase max health" << 
+        "\n4- Increase run spead" << 
+        "\n5- More and better health pickups" << 
+        "\n6- More and better ammo pickups";
+     levelUpText.setString(levelUpStream.str());
+
+    // Ammo
+    sf::Text ammoText;
+    ammoText.setFont(font);
+    ammoText.setCharacterSize(55);
+    ammoText.setFillColor(sf::Color::White);
+    ammoText.setPosition(200, 980);
+
+    // Score
+    sf::Text scoreText;
+    scoreText.setFont(font);
+    scoreText.setCharacterSize(55);
+    scoreText.setFillColor(sf::Color::White);
+    scoreText.setPosition(20, 0);
+
+    // Hi Score
+    sf::Text hiScoreText;
+    hiScoreText.setFont(font);
+    hiScoreText.setCharacterSize(55);
+    hiScoreText.setFillColor(sf::Color::White);
+    hiScoreText.setPosition(1400, 0);
+    std::stringstream s;
+    s << "Hi Score: " << hiScore;
+    hiScoreText.setString(s.str());
+
+    // Zombie remaining
+    sf::Text zombieRemainingText;
+    zombieRemainingText.setFont(font);
+    zombieRemainingText.setCharacterSize(55);
+    zombieRemainingText.setFillColor(sf::Color::White);
+    zombieRemainingText.setPosition( 1500, 980);
+    zombieRemainingText.setString("Zombies: 100");
+
+    //Wave number
+    int wave = 0;
+    sf::Text waveNumberText;
+    waveNumberText.setFont(font);
+    waveNumberText.setCharacterSize(55);
+    waveNumberText.setFillColor(sf::Color::White);
+    waveNumberText.setPosition(1500, 980);
+    waveNumberText.setString("Wave: 0");
+
+    //Health bar
+    sf::RectangleShape healthBar;
+    healthBar.setFillColor(sf::Color::White);
+    healthBar.setPosition( 450, 980);
+#pragma endregion text_initialization
+
+    sf::Text debugText;
+    debugText.setFont(font);
+    debugText.setCharacterSize(25);
+    debugText.setFillColor(sf::Color::White);
+    debugText.setPosition( 20, 220);
+    std::stringstream ss;
+
+    // when did we last update the hud
+    int framesSinceLastHUDUpdate = 0;
+    int fpsMeasurementFrameInterval = 1000;
 
 #pragma endregion Initialization
 
@@ -230,7 +337,7 @@ int main()
                 ammoPickup.setArena(arena);
 
                 // Create a horde of zombies
-                numZombies = 20;
+                numZombies = 10;
                 // Delete the previously allocated memory if it exist
                 delete[] zombies;
                 zombies = createHorde(numZombies, arena);
@@ -344,6 +451,37 @@ int main()
                 bulletsSpare += ammoPickup.gotIt();
             }
 
+            // size up the health bar
+            healthBar.setSize(sf::Vector2f(player.getHealth()*3, 50));
+            // increment the numer of frames since the previous update
+            framesSinceLastHUDUpdate++;
+            // re-calcilate eceru fpsMeasurementFrameInterval frame
+            if (framesSinceLastHUDUpdate > fpsMeasurementFrameInterval)
+            {
+                std::stringstream ssAmmo;
+                std::stringstream ssScore;
+                std::stringstream ssHiScore;
+                std::stringstream ssWave;
+                std::stringstream ssZombiesAlive;
+                // Update the ammo text
+                ssAmmo << bulletsInClip << "/" << bulletsSpare;
+                ammoText.setString(ssAmmo.str());
+                //update the score text 
+                ssScore << "Score: " << score;
+                scoreText.setString(ssScore.str());
+                // update the HiScore text
+                ssHiScore << "Hi-Score: " << hiScore;
+                hiScoreText.setString(ssHiScore.str());
+                // update the wave
+                ssWave << "Wave: " << wave;
+                waveNumberText.setString(ssWave.str());
+                // Update the zombies alive wave. 
+                ssZombiesAlive << "Zombies: " << numZombiesAlive;
+                zombieRemainingText.setString(ssZombiesAlive.str());
+
+                framesSinceLastHUDUpdate = 0;
+            } // End HUD Update.
+
        }// Endupdat the escene.
         
         /*
@@ -379,25 +517,45 @@ int main()
             window.draw(player.GetSprite());
 
             if (ammoPickup.isSpawned())
-                window.draw(ammoPickup.getSprite());
+            {
+                window.draw( ammoPickup.getSprite());
+            }
+            
             if (healthPickup.isSpawned())
-                window.draw(healthPickup.getSprite());
+            {
+                window.draw( healthPickup.getSprite());
+            }
 
             window.draw(spriteCrosshair);
+
+            // Draw all the hud elements.
+            window.setView(hudView);
+            window.draw(spriteAmmoIcon);
+            window.draw(ammoText);
+            window.draw(scoreText);
+            window.draw(hiScoreText);
+            window.draw(healthBar);
+            window.draw(waveNumberText);
+            window.draw(zombieRemainingText);
        }
 
        if (state == State::LEVELING_UP)
        {
-
+           window.draw(spriteGameOver);
+           window.draw(levelUpText);
        }
 
        if (state == State::PAUSED)
        {
-
+           window.draw(pausedText);
        }
 
        if (state == State::GAME_OVER)
        {
+           window.draw(spriteGameOver);
+           window.draw(gameOverText);
+           window.draw(scoreText);
+           window.draw(hiScoreText);
 
        }
 

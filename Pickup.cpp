@@ -1,5 +1,6 @@
 #include "Pickup.h"
 #include "TextureManager.h"
+#include <iostream>
 
 Pickup::Pickup(int type)
 {
@@ -37,6 +38,7 @@ void Pickup::spawn()
     int y = (rand()% m_Arena.height);
     m_Spawned = true;
     m_Sprite.setPosition(x, y);
+    std::cout << "Spawn pickup at: X = " << x << " Y = " << y << std::endl;
 }
 
 sf::FloatRect Pickup::getPosition()
@@ -77,10 +79,11 @@ void Pickup::update(float elapsedTime)
         m_Spawned = false;
         m_secondsSinceDeSpawn = 0;
     }
-     if(m_secondsSinceDeSpawn > m_secondsToWait && !m_Spawned)
-     {
-         spawn();
-     }
+
+    if(m_secondsSinceDeSpawn > m_secondsToWait && !m_Spawned)
+    {
+        spawn();
+    }
 }
 
 void Pickup::upgrade()
