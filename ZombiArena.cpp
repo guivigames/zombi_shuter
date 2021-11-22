@@ -88,12 +88,13 @@ int main()
     sf::Sprite spriteGameOver;
     spriteGameOver.setTexture(TheTextureManager::Instance()->GetTexture("assets/background.png"));
     spriteGameOver.setPosition( 0, 0);
+    spriteGameOver.setScale( resolution.x / 1920, resolution.y / 1080);
      sf::View hudView(sf::FloatRect( 0,0, resolution.x, resolution.y));
 
      // Sprite for ammo icon
      sf::Sprite spriteAmmoIcon;
      spriteAmmoIcon.setTexture(TheTextureManager::Instance()->GetTexture("assets/ammo_icon.png"));
-     spriteAmmoIcon.setPosition(20, 980);
+     spriteAmmoIcon.setPosition(resolution.x*0.01, resolution.y*0.9);
 
 #pragma region text_initialization
      // Load te font.
@@ -105,7 +106,7 @@ int main()
      pausedText.setFont(font);
      pausedText.setCharacterSize(155);
      pausedText.setFillColor(sf::Color::White);
-     pausedText.setPosition(400, 400);
+     pausedText.setPosition(resolution.x*0.2, resolution.y*0.37);
      pausedText.setString("Press Enter\nto continue");
 
      // Game over
@@ -113,7 +114,7 @@ int main()
      gameOverText.setFont(font);
      gameOverText.setCharacterSize(125);
      gameOverText.setFillColor(sf::Color::White);
-     gameOverText.setPosition(250, 850);
+     gameOverText.setPosition(resolution.x*0.13, resolution.y*0.78);
      gameOverText.setString("Press Enter to play");
 
      // Levelup
@@ -121,7 +122,7 @@ int main()
      levelUpText.setFont(font);
      levelUpText.setCharacterSize(80);
      levelUpText.setFillColor(sf::Color::White);
-     levelUpText.setPosition(150, 250);
+     levelUpText.setPosition(resolution.x*0.078, resolution.y*0.23);
      std::stringstream levelUpStream;
      levelUpStream << 
         "1- Increase rate of fire" <<
@@ -144,14 +145,14 @@ int main()
     scoreText.setFont(font);
     scoreText.setCharacterSize(55);
     scoreText.setFillColor(sf::Color::White);
-    scoreText.setPosition(20, 0);
+    scoreText.setPosition(resolution.x*0.01, 0);
 
     // Hi Score
     sf::Text hiScoreText;
     hiScoreText.setFont(font);
     hiScoreText.setCharacterSize(55);
     hiScoreText.setFillColor(sf::Color::White);
-    hiScoreText.setPosition(1400, 0);
+    hiScoreText.setPosition(resolution.x*0.72, 0);
     std::stringstream s;
     s << "Hi Score: " << hiScore;
     hiScoreText.setString(s.str());
@@ -161,7 +162,7 @@ int main()
     zombieRemainingText.setFont(font);
     zombieRemainingText.setCharacterSize(55);
     zombieRemainingText.setFillColor(sf::Color::White);
-    zombieRemainingText.setPosition( 1500, 980);
+    zombieRemainingText.setPosition( resolution.x*0.78, resolution.y*0.9);
     zombieRemainingText.setString("Zombies: 100");
 
     //Wave number
@@ -170,13 +171,13 @@ int main()
     waveNumberText.setFont(font);
     waveNumberText.setCharacterSize(55);
     waveNumberText.setFillColor(sf::Color::White);
-    waveNumberText.setPosition(1500, 980);
+    waveNumberText.setPosition(resolution.x*0.65, resolution.y*0.9);
     waveNumberText.setString("Wave: 0");
 
     //Health bar
     sf::RectangleShape healthBar;
     healthBar.setFillColor(sf::Color::White);
-    healthBar.setPosition( 450, 980);
+    healthBar.setPosition( resolution.x*0.23, resolution.y*0.9);
 #pragma endregion text_initialization
 
     sf::Text debugText;
@@ -386,7 +387,7 @@ int main()
                 if (zombies[i].isAlive())
                 {
                     //std::cout << "Update Zombe " << i << std::endl;
-                    zombies[i].update( dt.asSeconds(), playerPosition);
+                    zombies[i].update( dtAsSeconds, playerPosition);
                 }
             }
             
@@ -519,11 +520,13 @@ int main()
             if (ammoPickup.isSpawned())
             {
                 window.draw( ammoPickup.getSprite());
+                std::cout << "Draw ammo" << std::endl;
             }
-            
+
             if (healthPickup.isSpawned())
             {
                 window.draw( healthPickup.getSprite());
+                std::cout << "Draw health" << std::endl;
             }
 
             window.draw(spriteCrosshair);
