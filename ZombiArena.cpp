@@ -1,6 +1,8 @@
 #include <sstream>
+#include <fstream>
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include "character.h"
 #include "ZombiArena.h"
 #include "TextureManager.h"
@@ -147,6 +149,15 @@ int main()
     scoreText.setFillColor(sf::Color::White);
     scoreText.setPosition(resolution.x*0.01, 0);
 
+    // Load te high score from a text file
+    std::ifstream inputFile("assets/scores.txt");
+    if (inputFile.is_open())
+    {
+        // >> read the data.
+        inputFile >> hiScore;
+        inputFile.close();
+    }
+
     // Hi Score
     sf::Text hiScoreText;
     hiScoreText.setFont(font);
@@ -191,6 +202,51 @@ int main()
     int framesSinceLastHUDUpdate = 0;
     int fpsMeasurementFrameInterval = 1000;
 
+#pragma region SOUND
+    // Prepare the hit sound
+    sf::SoundBuffer hitBuffer;
+    hitBuffer.loadFromFile("assets/hit.wav");
+    sf::Sound hit;
+    hit.setBuffer(hitBuffer);
+
+    // Prepare the shut buffer
+    sf::SoundBuffer shootBuffer;
+    shootBuffer.loadFromFile("assets/shoot.wab");
+    sf::Sound shoot;
+    shoot.setBuffer(shootBuffer);
+
+    // Prepare the spat sound
+    sf::SoundBuffer splatBuffer;
+    splatBuffer.loadFromFile("assets/splat.wav");
+    sf::Sound splat;
+    splat.setBuffer(splatBuffer);
+
+    // prepare the reload sound
+    sf::SoundBuffer reloadBuffer;
+    reloadBuffer.loadFromFile("assets/reload.wav");
+    sf::Sound reload;
+    reload.setBuffer(reloadBuffer);
+
+    // prepare the failed sound;
+    sf::SoundBuffer reloadFailedBuffer;
+    reloadFailedBuffer.loadFromFile("assets/reload_failed.wav");
+    sf::Sound reloadFiled;
+    reloadFiled.setBuffer(reloadFailedBuffer);
+
+    // Prepare the power sound
+    sf::SoundBuffer powerupBuffer;
+    powerupBuffer.loadFromFile("assets/powerup.wav");
+    sf::Sound powerup;
+    powerup.setBuffer(powerupBuffer);
+
+    // prepare the pickup sound
+    sf::SoundBuffer pickupBuffer;
+    pickupBuffer.loadFromFile("assets/pickup.wav");
+    sf::Sound pickup;
+    pickup.setBuffer(pickupBuffer);
+
+#pragma endregion SOUND
+
 #pragma endregion Initialization
 
     // The main game loop
@@ -222,6 +278,13 @@ int main()
                 else if ( event.key.code == Keyboard::Return && state == State::GAME_OVER)
                 {
                     state = State::LEVELING_UP;
+                    wave = 0;
+                    score = 0;
+                    currentBullet = 0;
+                    bulletsSpare = 24;
+                    clipSize = 6;
+                    fireRate = 1;
+                    player.resetPlayerState();
                 }
 
                 if (state == State::PLAYING)
@@ -232,14 +295,16 @@ int main()
                         {
                             bulletsInClip  = clipSize;
                             bulletsSpare -= clipSize;
+                            reload.play();
                         }
                         else if (bulletsSpare > 0)
                         {
                             bulletsInClip = bulletsSpare;
                             bulletsSpare = 0;
+                            reload.play();
                         } 
                         else {
-
+                            reloadFiled.play();
                         }
                     }
 
@@ -298,6 +363,7 @@ int main()
                         if (currentBullet > 99)
                             currentBullet = 0;
                         lastPressed = gameTimeTotal;
+                        shoot.play();
                         bulletsInClip--;
                     }
             }
@@ -306,20 +372,38 @@ int main()
         // Handle leveling up
         if (state == State::LEVELING_UP)
         {
-            if (event.key.code == Keyboard::Num1)
+            if (event.key.code == Keyboard::Num1){
+                fireRate++;
                 state = State::PLAYING;
+            }
             if (event.key.code == Keyboard::Num2)
+            {
+                clipSize++;
                 state = State::PLAYING;
+            }
             if (event.key.code == Keyboard::Num3)
+            {
+                player.upgradeHealth();
                 state = State::PLAYING;
+            }
             if (event.key.code == Keyboard::Num4)
+            {
+                player.upgradeSpeed();
                 state = State::PLAYING;
+            }
             if (event.key.code == Keyboard::Num5)
+            {
+                healthPickup.upgrade();
                 state = State::PLAYING;
+            }
             if (event.key.code == Keyboard::Num6)
+            {
+                ammoPickup.upgrade();
                 state = State::PLAYING;
+            }
             if (state == State::PLAYING)
             {
+                wave++;
                 // prepare the level
                 // we will modify the next two lines later
                 arena.width = 1000;
@@ -338,11 +422,13 @@ int main()
                 ammoPickup.setArena(arena);
 
                 // Create a horde of zombies
-                numZombies = 10;
+                numZombies = 5 * wave;
                 // Delete the previously allocated memory if it exist
                 delete[] zombies;
                 zombies = createHorde(numZombies, arena);
                 numZombiesAlive = numZombies;
+
+                powerup.play();
 
                 // Reset the clock so there isn't a frame jump
                 clock.restart();
@@ -422,6 +508,7 @@ int main()
                                 if (numZombiesAlive == 0)
                                     state = State::LEVELING_UP;
                             }
+                            splat.play();
                         }
                     }
                 }
@@ -434,11 +521,18 @@ int main()
                 {
                     if (player.hit(gameTimeTotal))
                     {
-
+                        hit.play();
                     }
 
                     if (player.getHealth() <= 0)
+                    {
                         state = State::GAME_OVER;
+                        std::ofstream outFile("assets/scores.txt");
+                        // << write hiscore to file
+                        outFile << hiScore;
+                        outFile.close();
+                    }
+
                 }
             }
 
@@ -446,10 +540,12 @@ int main()
             if( player.getPosition().intersects(healthPickup.getPosition()) && healthPickup.isSpawned())
             {
                 player.increaseHealthLevel(healthPickup.gotIt());
+                pickup.play();
             }
             if( player.getPosition().intersects( ammoPickup.getPosition()) && ammoPickup.isSpawned())
             {
                 bulletsSpare += ammoPickup.gotIt();
+                reload.play();
             }
 
             // size up the health bar
@@ -520,13 +616,13 @@ int main()
             if (ammoPickup.isSpawned())
             {
                 window.draw( ammoPickup.getSprite());
-                std::cout << "Draw ammo" << std::endl;
+                //std::cout << "Draw ammo" << std::endl;
             }
 
             if (healthPickup.isSpawned())
             {
                 window.draw( healthPickup.getSprite());
-                std::cout << "Draw health" << std::endl;
+                //std::cout << "Draw health" << std::endl;
             }
 
             window.draw(spriteCrosshair);
